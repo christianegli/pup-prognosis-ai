@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { DogQuestionnaireForm } from '@/components/DogQuestionnaireForm';
 import { AssessmentResults } from '@/components/AssessmentResults';
-import { ApiKeySetup } from '@/components/ApiKeySetup';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Heart, Shield, Pill, Star } from 'lucide-react';
@@ -11,20 +10,9 @@ import { DogInfo, AssessmentResult } from '@/types/dog';
 import heroImage from '@/assets/hero-dog.jpg';
 
 const Index = () => {
-  const [hasApiKey, setHasApiKey] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [assessmentResult, setAssessmentResult] = useState<AssessmentResult | null>(null);
   const { toast } = useToast();
-
-  useEffect(() => {
-    const apiKey = AIAnalysisService.getApiKey();
-    setHasApiKey(!!apiKey);
-  }, []);
-
-  const handleApiKeySet = (key: string) => {
-    AIAnalysisService.setApiKey(key);
-    setHasApiKey(true);
-  };
 
   const handleDogAssessment = async (dogInfo: DogInfo) => {
     setIsAnalyzing(true);
@@ -52,10 +40,6 @@ const Index = () => {
   const handleNewAssessment = () => {
     setAssessmentResult(null);
   };
-
-  if (!hasApiKey) {
-    return <ApiKeySetup onApiKeySet={handleApiKeySet} />;
-  }
 
   if (assessmentResult) {
     return (

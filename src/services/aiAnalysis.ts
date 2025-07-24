@@ -15,66 +15,26 @@ export class AIAnalysisService {
   }
 
   static async analyzeDogHealth(dogInfo: DogInfo): Promise<AssessmentResult> {
-    const apiKey = this.getApiKey();
-    if (!apiKey) {
-      throw new Error('Google AI API key not found');
-    }
-
-    const prompt = this.createAnalysisPrompt(dogInfo);
-
     try {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`, {
+      const response = await fetch('/api/analyze-dog-health', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                {
-                  text: `You are a highly knowledgeable veterinary health analyst AI specializing in canine health assessment and nutritional supplementation. Your expertise includes:
-
-- Breed-specific health predispositions and genetic conditions
-- Age-related health risks and preventive care
-- Nutritional science and supplement interactions
-- Evidence-based veterinary medicine
-- Risk assessment and probability analysis
-
-Always provide accurate, science-based recommendations while emphasizing that your analysis supplements but never replaces professional veterinary care. Be thorough but clear, and always include appropriate disclaimers about seeking professional veterinary advice.
-
-Your response must be a valid JSON object matching the AssessmentResult interface structure exactly.
-
-${prompt}`
-                }
-              ]
-            }
-          ],
-          generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: 3000,
-          },
-        }),
+        body: JSON.stringify({ dogInfo }),
       });
 
       if (!response.ok) {
-        throw new Error(`API request failed: ${response.statusText}`);
+        throw new Error(`Analysis request failed: ${response.statusText}`);
       }
 
-      const data = await response.json();
-      const content = data.candidates[0].content.parts[0].text;
-
-      // Parse the JSON response
-      let analysisResult: AssessmentResult;
-      try {
-        analysisResult = JSON.parse(content);
-      } catch (parseError) {
-        console.error('Failed to parse AI response:', content);
-        throw new Error('Invalid response format from AI service');
+      const result = await response.json();
+      
+      if (result.error) {
+        throw new Error(result.error);
       }
 
-      // Validate and ensure the response structure is correct
-      return this.validateAndFormatResult(analysisResult, dogInfo);
+      return result;
 
     } catch (error) {
       console.error('AI Analysis error:', error);
