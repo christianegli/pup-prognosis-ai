@@ -22,16 +22,16 @@ export const ApiKeySetup = ({ onApiKeySet }: ApiKeySetupProps) => {
     if (!apiKey.trim()) {
       toast({
         title: "Error",
-        description: "Please enter your OpenAI API key",
+        description: "Please enter your Google AI API key",
         variant: "destructive",
       });
       return;
     }
 
-    if (!apiKey.startsWith('sk-')) {
+    if (!apiKey.startsWith('AIza')) {
       toast({
         title: "Error",
-        description: "OpenAI API keys should start with 'sk-'",
+        description: "Google AI API keys should start with 'AIza'",
         variant: "destructive",
       });
       return;
@@ -41,11 +41,7 @@ export const ApiKeySetup = ({ onApiKeySet }: ApiKeySetupProps) => {
 
     try {
       // Validate the API key with a simple request
-      const response = await fetch('https://api.openai.com/v1/models', {
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-        },
-      });
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
 
       if (response.ok) {
         onApiKeySet(apiKey);
@@ -77,21 +73,21 @@ export const ApiKeySetup = ({ onApiKeySet }: ApiKeySetupProps) => {
           <div>
             <CardTitle className="text-2xl font-bold">Setup Required</CardTitle>
             <p className="text-muted-foreground mt-2">
-              Enter your OpenAI API key to enable AI-powered health analysis
+              Enter your Google AI API key to enable AI-powered health analysis
             </p>
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="apiKey">OpenAI API Key</Label>
+              <Label htmlFor="apiKey">Google AI API Key</Label>
               <div className="relative">
                 <Input
                   id="apiKey"
                   type={showKey ? 'text' : 'password'}
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
-                  placeholder="sk-..."
+                  placeholder="AIza..."
                   className="pr-10"
                 />
                 <Button
@@ -138,21 +134,21 @@ export const ApiKeySetup = ({ onApiKeySet }: ApiKeySetupProps) => {
                 <ul className="space-y-1 text-xs">
                   <li>• Your API key is stored locally in your browser</li>
                   <li>• We never store or transmit your API key to our servers</li>
-                  <li>• All AI analysis requests go directly to OpenAI</li>
+                  <li>• All AI analysis requests go directly to Google AI</li>
                   <li>• You can remove your key anytime by clearing browser data</li>
                 </ul>
               </div>
             </div>
 
             <div className="text-center">
-              <p>Don't have an OpenAI API key?</p>
+              <p>Don't have a Google AI API key?</p>
               <a
-                href="https://platform.openai.com/api-keys"
+                href="https://aistudio.google.com/app/apikey"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary hover:underline font-medium"
               >
-                Get one from OpenAI →
+                Get one from Google AI Studio →
               </a>
             </div>
           </div>

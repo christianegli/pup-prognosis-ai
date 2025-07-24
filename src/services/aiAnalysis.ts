@@ -5,36 +5,35 @@ export class AIAnalysisService {
 
   static setApiKey(key: string) {
     this.apiKey = key;
-    localStorage.setItem('openai_api_key', key);
+    localStorage.setItem('google_ai_api_key', key);
   }
 
   static getApiKey(): string | null {
     if (this.apiKey) return this.apiKey;
-    this.apiKey = localStorage.getItem('openai_api_key');
+    this.apiKey = localStorage.getItem('google_ai_api_key');
     return this.apiKey;
   }
 
   static async analyzeDogHealth(dogInfo: DogInfo): Promise<AssessmentResult> {
     const apiKey = this.getApiKey();
     if (!apiKey) {
-      throw new Error('OpenAI API key not found');
+      throw new Error('Google AI API key not found');
     }
 
     const prompt = this.createAnalysisPrompt(dogInfo);
 
     try {
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'gpt-4.1-2025-04-14',
-          messages: [
+          contents: [
             {
-              role: 'system',
-              content: `You are a highly knowledgeable veterinary health analyst AI specializing in canine health assessment and nutritional supplementation. Your expertise includes:
+              parts: [
+                {
+                  text: `You are a highly knowledgeable veterinary health analyst AI specializing in canine health assessment and nutritional supplementation. Your expertise includes:
 
 - Breed-specific health predispositions and genetic conditions
 - Age-related health risks and preventive care
@@ -44,15 +43,17 @@ export class AIAnalysisService {
 
 Always provide accurate, science-based recommendations while emphasizing that your analysis supplements but never replaces professional veterinary care. Be thorough but clear, and always include appropriate disclaimers about seeking professional veterinary advice.
 
-Your response must be a valid JSON object matching the AssessmentResult interface structure exactly.`
-            },
-            {
-              role: 'user',
-              content: prompt
+Your response must be a valid JSON object matching the AssessmentResult interface structure exactly.
+
+${prompt}`
+                }
+              ]
             }
           ],
-          temperature: 0.7,
-          max_tokens: 3000,
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 3000,
+          },
         }),
       });
 
@@ -61,7 +62,7 @@ Your response must be a valid JSON object matching the AssessmentResult interfac
       }
 
       const data = await response.json();
-      const content = data.choices[0].message.content;
+      const content = data.candidates[0].content.parts[0].text;
 
       // Parse the JSON response
       let analysisResult: AssessmentResult;
