@@ -16,10 +16,11 @@ export class AIAnalysisService {
 
   static async analyzeDogHealth(dogInfo: DogInfo): Promise<AssessmentResult> {
     try {
-      const response = await fetch('/api/analyze-dog-health', {
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/analyze-dog-health`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
         },
         body: JSON.stringify({ dogInfo }),
       });

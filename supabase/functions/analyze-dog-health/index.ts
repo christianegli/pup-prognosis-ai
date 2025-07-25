@@ -102,11 +102,11 @@ Dog Information:
 - Activity Level: ${dogInfo.activityLevel}
 - Exercise Hours: ${dogInfo.exerciseHours} hours/day
 - Environment: ${dogInfo.environment}
-- Previous Health Issues: ${dogInfo.previousHealthIssues.join(', ') || 'None reported'}
-- Current Medications: ${dogInfo.currentMedications.join(', ') || 'None'}
-- Current Symptoms: ${dogInfo.symptoms.join(', ') || 'None reported'}
+- Previous Health Issues: ${dogInfo.previousHealthIssues?.join(', ') || 'None reported'}
+- Current Medications: ${dogInfo.currentMedications?.join(', ') || 'None'}
+- Current Symptoms: ${dogInfo.symptoms?.join(', ') || 'None reported'}
 - Dietary Preferences: ${dogInfo.dietaryPreferences || 'Standard diet'}
-- Known Allergies: ${dogInfo.allergies.join(', ') || 'None reported'}
+- Known Allergies: ${dogInfo.allergies?.join(', ') || 'None reported'}
 
 Based on this information, please provide a detailed analysis including:
 
