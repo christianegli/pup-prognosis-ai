@@ -16,11 +16,11 @@ export class AIAnalysisService {
 
   static async analyzeDogHealth(dogInfo: DogInfo): Promise<AssessmentResult> {
     try {
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/analyze-dog-health`, {
+      const response = await fetch(`https://moskdrumibgjtdjlorwx.supabase.co/functions/v1/analyze-dog-health`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1vc2tkcnVtaWJnanRkamxvcnd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMzODM5NTcsImV4cCI6MjA2ODk1OTk1N30.jqtq7SCb6xm-mvlHy-iTPOqEe3Jnbvg06diW84XGdXs`,
         },
         body: JSON.stringify({ dogInfo }),
       });
