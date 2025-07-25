@@ -56,7 +56,11 @@ ${prompt}`
     });
 
     if (!response.ok) {
-      throw new Error(`API request failed: ${response.statusText}`);
+      const errorText = await response.text();
+      if (response.status === 429) {
+        throw new Error('Google AI API rate limit exceeded. Please try again in a few minutes.');
+      }
+      throw new Error(`API request failed: ${response.statusText} - ${errorText}`);
     }
 
     const data = await response.json();
